@@ -1,0 +1,18 @@
+# virtualenv
+venv/
+ENV/
+
+# Spyder project settings
+.spyderproject
+
+# Rope project settings
+.ropeproject
+
+# MyBlog
+.idea/
+*.sqlite3
+*/migrations/
+media/
+fabfile.py
+__pycache__/
+whoosh_index/
