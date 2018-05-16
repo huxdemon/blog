@@ -11,10 +11,16 @@ from django.utils.html import strip_tags
 class Category(models.Model):
     name = models.CharField(max_length=100)  # 分类名称
 
+    def __str__(self):
+        return self.name
+
 
 # 标签表
 class Tag(models.Model):
     name = models.CharField(max_length=100)  # 标签名
+
+    def __str__(self):
+        return self.name
 
 
 # 文章表
