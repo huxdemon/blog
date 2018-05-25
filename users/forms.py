@@ -104,19 +104,13 @@ class Forget_codeForm(forms.Form):
         else:
             # verify_code = VerifyCode.objects.filter(code=code)
             user = User.objects.get(username=username)
-            verify_codes = user.verifycode_set.all()
-            if len(verify_codes) == 0:  # 验证是否存在
-                error_list.append(forms.ValidationError("输入验证码错误！"))
-            else:
-                verify_code = verify_codes[0]
-                if verify_code.code != code:  # 验证码是否相等
+            try:
+                verify_code = user.verifycode_set.first()
+                if  not verify_code_time(verify_code) or verify_code.code !=code or verify_code.type != 0 :
                     error_list.append(forms.ValidationError("输入验证码错误！"))
-                else:
-                    if verify_code.type != 0:  # 验证码类型
-                        error_list.append(forms.ValidationError("输入验证码错误！"))
-                    else:
-                        if verify_code.active_time <= timezone.now():  # 验证码有效期
-                            error_list.append(forms.ValidationError("输入验证码错误！"))
+                verify_code.is_valid = 0
+            except Exception:
+                error_list.append(forms.ValidationError("输入验证码错误！"))
         if len(error_list):
             raise forms.ValidationError(error_list)
 
@@ -133,3 +127,12 @@ class Forget_codeForm(forms.Form):
 #
 #         if password1 != password2:
 #             raise forms.ValidationError("输入密码不一致！")
+
+
+
+def verify_code_time(code):
+    if timezone.now() > code.active_time:
+        code.is_valid = 0
+        code.save()
+        return 0
+    return 1
