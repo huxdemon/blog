@@ -1,7 +1,7 @@
+<!DOCTYPE html>
 {% load staticfiles %}
 <!-- 为了使用static 模板标签 -->
 {% load blog_tags %}
-<!DOCTYPE html>
 <html>
 <head>
     <title>huxdemon的博客</title>
@@ -27,6 +27,11 @@
         span.highlighted {
             color: red;
         }
+
+
+
+
+
     </style>
 </head>
 
@@ -50,9 +55,25 @@
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
                             <li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
-                            <li class="cl-effect-11"><a href="#" data-hover="博客">博客</a></li>
-                            <li class="cl-effect-11"><a href="#" data-hover="关于">关于</a></li>
-                            <li class="cl-effect-11"><a href="#" data-hover="联系">联系</a></li>
+                            <li class="cl-effect-11"><a href="#">博客</a></li>
+                            <li class="cl-effect-11"><a href="#">关于</a></li>
+                            <li class="cl-effect-11"><a href="#">联系</a></li>
+                            {% if request.user.is_authenticated %}
+                            <li class="cl-effect-11">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-haspopup="true" aria-expanded="false">{{ request.user.username }}<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">写博客</a></li>
+                                    <li><a href="#">个人中心</a></li>
+                                    <li><a href="{% url 'users:reset' %}">修改密码</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li class="cl-effect-11"><a href="{% url 'users:logout' %}">退出</a></li>
+                                </ul>
+                            </li>
+                            {% else %}
+                            <li class="cl-effect-11"><a href="{% url 'users:login' %}">登录</a></li>
+                            <li class="cl-effect-11"><a href="{% url 'users:register' %}">注册</a></li>
+                            {% endif %}
                         </ul>
                     </div><!-- /.navbar-collapse -->
                 </nav>
@@ -68,12 +89,20 @@
             </div><!-- col-md-8 -->
         </div>
     </header>
+    <br><br>
 </div>
 
 <div class="content-body">
     <div class="container">
         <div class="row">
             <main class="col-md-8">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags %}{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}"
+                     role="alert">{{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
                 {% block main %}
                 {% endblock main %}
             </main>

@@ -105,7 +105,7 @@ class WhooshSearchBackend(BaseSearchBackend):
             new_index = True
 
         if self.use_file_storage and not os.access(self.path, os.W_OK):
-            raise IOError("The path to your Whoosh index '%s' is not writable for the current user/group." % self.path)
+            raise IOError("The path to your Whoosh index '%s' is not writable for the current users/group." % self.path)
 
         if self.use_file_storage:
             self.storage = FileStorage(self.path)
@@ -756,7 +756,7 @@ class WhooshSearchQuery(BaseSearchQuery):
 
     def clean(self, query_fragment):
         """
-        Provides a mechanism for sanitizing user input before presenting the
+        Provides a mechanism for sanitizing users input before presenting the
         value to the backend.
 
         Whoosh 1.X differs here in that you can no longer use a backslash

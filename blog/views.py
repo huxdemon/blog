@@ -230,7 +230,11 @@ def search(request):
     if not q:
         error_msg = "请输入关键字"
         return render(request, 'blog/index.html', {'error_msg': error_msg})
-
     post_list = Post.object.filter(Q(title__icontain=q) | Q(body_icontains=q))
     return render(request, 'blog/index.html', {'error_msg': error_msg,
                                                'post_list': post_list})
+
+
+# # 新增博客视图
+# def addPost(request):
+#
