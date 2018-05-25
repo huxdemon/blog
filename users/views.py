@@ -190,8 +190,6 @@ def ForgetDone(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password1 = form.cleaned_data['password1']
-            password2 = form.cleaned_data['password2']
-            code = form.cleaned_data['code']
             user = User.objects.filter(username=username)[0]
             user.set_password(password1)
             user.save()

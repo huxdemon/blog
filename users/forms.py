@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import ValidationError
 from .models import VerifyCode
+from django.utils import timezone
 
 # 登录
 class LoginForm(forms.Form):
@@ -90,16 +91,32 @@ class Forget_codeForm(forms.Form):
 
     def clean(self):
         clean_data = super(Forget_codeForm, self).clean()
+        username = clean_data.get('username')
         code = clean_data.get('code')
         password1 = clean_data.get('password1')
         password2 = clean_data.get('password2')
-        verify_code = VerifyCode.objects.filter(code=code).count()
 
         error_list = list()
         if password1 != password2:
             error_list.append(forms.ValidationError("输入密码不一致！"))
-        if verify_code is None:
+        if code is None:
             error_list.append(forms.ValidationError("输入验证码错误！"))
+        else:
+            # verify_code = VerifyCode.objects.filter(code=code)
+            user = User.objects.get(username=username)
+            verify_codes = user.verifycode_set.all()
+            if len(verify_codes) == 0:  # 验证是否存在
+                error_list.append(forms.ValidationError("输入验证码错误！"))
+            else:
+                verify_code = verify_codes[0]
+                if verify_code.code != code:  # 验证码是否相等
+                    error_list.append(forms.ValidationError("输入验证码错误！"))
+                else:
+                    if verify_code.type != 0:  # 验证码类型
+                        error_list.append(forms.ValidationError("输入验证码错误！"))
+                    else:
+                        if verify_code.active_time <= timezone.now():  # 验证码有效期
+                            error_list.append(forms.ValidationError("输入验证码错误！"))
         if len(error_list):
             raise forms.ValidationError(error_list)
 
